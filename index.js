@@ -19,17 +19,75 @@ const config = {
 
 const pool = new Pool(config);
 
-pool.connect((error_conexion, client, release) => {
-    client.query (`insert into peliculas (id, pelicula, ano_estreno, director) values (102, 'Parasitos', 2020, 'Hu Wok') returning *;`,
-    (error_query, resul) => {
-        console.log("error: ", error_query);
+// pool.connect((error_conexion, client, release) => {
+
+//     const datosPelicula = [103, 'La Cosa', 1984, 'John Carpenter']
+
+//     client.query (`insert into peliculas (id, pelicula, ano_estreno, director) values ($1, $2, $3, $4) returning *;`,
+//     datosPelicula, (error_query, resul) => {
+//         console.log("error: ", error_query);
+//         release();
+//         console.log("registro: ", resul.rows[0]);
+//     })
+
+//     pool.end();
+// });
+
+
+// pool.connect(async (error_conexion, client, release) => {
+
+//     const datosPelicula = [105, 'La Cosa', 1984, 'John Carpenter']
+
+//     const res = await client.query (`insert into peliculas (id, pelicula, ano_estreno, director) values ($1, $2, $3, $4) returning *;`,
+//     datosPelicula);
+
+
+//     release();
+//     console.log("registro: ", res.rows[0]);
+
+//     pool.end();
+// });
+
+
+// pool.connect(async (error_conexion, client, release) => {
+
+//     const datosPelicula = [106, 'La Cosa 2', 1988, 'John Carpenter'];
+
+//     const sqlQuery = {
+//         text: `insert into peliculas (id, pelicula, ano_estreno, director) values ($1, $2, $3, $4) returning *;`,
+//         values: datosPelicula
+//     }
+
+//     const res = await client.query (sqlQuery);
+
+//     release();
+//     console.log("registro: ", res.rows[0]);
+
+//     pool.end();
+// });
+
+
+pool.connect(async (error_conexion, client, release) => {
+
+    const datosPelicula = [106, 'La Cosa 2', 1988, 'John Carpenter'];
+    const ids = [90];
+
+    const sqlQuery = {
+        text: `select * from peliculas where id > $1;`,
+        rowMode: 'array',
+        values: ids
+    }
+
+    try {
+        const res = await client.query (sqlQuery);
+        console.log("registro: ", res.rows);
+    } 
+    catch (error) {
+        console.log("Aqui hay un errorcito:", error.message);
+    }
+    finally {
         release();
-        console.log("registro: ", resul.rows[0]);
-    })
+    }
 
     pool.end();
 });
-
-
-
-
